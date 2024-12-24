@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tic-Tac-Toe</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background-color: white;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+        .cell:hover {
+            background-color: #e0e0e0;
+        }
+        .winner {
+            color: green;
+            font-weight: bold;
+        }
+        .reset {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>AI Tic-Tac-Toe</h1>
+<div class="board" id="board"></div>
+<button class="reset" id="resetButton">Reset Game</button>
+
+<script>
+    const boardElement = document.getElementById('board');
+    const resetButton = document.getElementById('resetButton');
+
+    let board = ['', '', '', '', '', '', '', '', '', ''];
+    let currentPlayer = 'X';  // Player is X, AI is O
+    let gameActive = true;
+
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+
+    function createBoard() {
+        boardElement.innerHTML = '';
+        board.forEach((cell, index) => {
+            const cellElement = document.createElement('div');
+            cellElement.classList.add('cell');
+            cellElement.setAttribute('data-index', index);
+            cellElement.innerText = cell;
+            cellElement.addEventListener('click', handleCellClick);
+            boardElement.appendChild(cellElement);
+        });
+    }
+
+    function handleCellClick(event) {
+        const index = event.target.getAttribute('data-index');
+        if (board[index] !== '' || !gameActive) {
+            return; // Cell already filled or game is over
+        }
+        board[index] = currentPlayer;
+        checkResult();
+        if (gameActive) {
+            currentPlayer = 'O'; // Switch to AI
+            aiMove();
+        }
+        createBoard();
+    }
+
+    function aiMove() {
+        const availableCells = board.map((cell, index) => cell === '' ? index : null).filter(cell => cell !== null);
+        const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+        board[randomCell] = currentPlayer;
+        checkResult();
+        currentPlayer = 'X'; // Switch back to player
+        createBoard();
+    }
+
+    function checkResult() {
+        let won = false;
+
+        for (let condition of winningConditions) {
+            const [a, b, c] = condition;
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                won = true;
+                setTimeout(() => {
+                    alert(`Player ${board[a]} wins!`);
+                    window.location.href = 'index.html'; // 返回到 index.html
+                }, 10);
+                break;
+            }
+        }
+
+        if (!won && !board.includes('')) {
+            setTimeout(() => {
+                alert(`It's a draw!`);
+                window.location.href = 'index.html'; // 返回到 index.html
+            }, 10);
+            gameActive = false;
+        }
+
+        if (won) {
+            gameActive = false;
+        }
+    }
+
+    function resetGame() {
+        board = ['', '', '', '', '', '', '', '', ''];
+        currentPlayer = 'X'; // Player starts first
+        gameActive = true;
+        createBoard();
+    }
+
+    resetButton.addEventListener('click', resetGame);
+    createBoard();
+</script>
+</body>
+</html>

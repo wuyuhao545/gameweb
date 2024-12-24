@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h2>关卡选项</h2>
+
+    {% if session.get('level_completed') %}
+    <div class="alert alert-success" role="alert">
+        关卡已通关！
+    </div>
+    {% with messages = session.get('level_completed') %}
+    {% if messages %}
+    {{ session.pop('level_completed') }}  {# Clear the message after displaying it #}
+    {% endif %}
+    {% endwith %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-2">
+            <a href="{{ url_for('level_1_page') }}">
+                <img src="./picture/smashbricks.png" class="img-fluid" alt="关卡 1 打砖块">
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('level_2_page') }}">
+                <img src="./picture/Flipthecards.png" class="img-fluid" alt="关卡 2 翻卡片">
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('level_3_page') }}">
+                <img src="./picture/BallBattle.png" class="img-fluid" alt="关卡 3 吃小球">
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('level_4_page') }}">
+                <img src="./picture/jing.png" class="img-fluid" alt="关卡 4 井字棋">
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
